@@ -1,0 +1,314 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Spring Boot Todo App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <style>
+      .calendar-day {
+        /* aspect-ratio: 1/1 modern tarayıcılarda 'aspect-square' karşılığıdır */
+        aspect-ratio: 1 / 1;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      /* hover:bg-surface-container-highest karşılığı */
+      .calendar-day:hover {
+        background-color: var(--bs-secondary-bg) !important;
+      }
+
+      /* Tıklanma efekti (Opsiyonel: Vibe Coding trendine uygun) */
+      .calendar-day:active {
+        transform: scale(0.98);
+      }
+
+      .rotate-text {
+        transform: rotate(90deg);
+      }
+
+      .scale-up {
+        transform: rotate(90deg) scale(1.1);
+      }
+
+      .blur-bg {
+        width: 80px;
+        height: 80px;
+        filter: blur(20px);
+      }
+
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
+      }
+
+      .transition-scale {
+        transition: transform 0.2s ease-in-out;
+      }
+      .transition-scale:active {
+        transform: scale(0.95);
+      }
+      .row-cols-7 > * {
+        flex: 0 0 auto;
+        width: 14.2857142857%; /* 100 / 7 */
+      }
+
+      .less-container {
+        width: calc(100% - 10rem);
+        margin-left: 5rem;
+        margin-right: 5rem;
+      }
+
+      .full-container {
+        width: calc(100% - 1rem);
+      }
+      /* Koyu mod (Dark Mode) desteği için Bootstrap 5.3 data-bs-theme kullanır */
+      [data-bs-theme="dark"] .text-primary {
+        color: #6ea8fe !important; /* Bootstrap dark blue */
+      }
+
+    </style>
+  </head>
+  <body class="bg-light">
+    <div th:classappend="${showBar ? 'less-container' : 'full-container'}">
+      <div class="row justify-content-center">
+        <header
+          class="navbar d-flex bg-light border-bottom px-4 py-2 shadow-sm col-md-6 col-11 col-sm-9 col-lg-4"
+        >
+          <div
+            class="d-flex align-items-center justify-content-between ps-2 pe-6"
+            style="width: 100%"
+          >
+            <div class="d-flex align-items-center gap-3">
+              <button
+                th:onclick="'window.location.href=\'' + @{/toggle-bar} + '\''"
+                class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
+              >
+                <i class="fa-solid fa-bars fs-5 text-primary"></i>
+              </button>
+              <h1
+                class="h5 mb-0 fw-bold text-primary tracking-tight"
+                th:text="${scrollMonth} + ' ' + ${scrollYear}"
+              ></h1>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              <button
+                class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
+                th:onclick="'window.location.href=\'' + @{/change-month/{isNext}(isNext=${false})} + '\''"
+              >
+                <i class="fa-solid fa-chevron-left fs-6 text-primary"></i>
+              </button>
+              <button
+                class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
+                th:onclick="'window.location.href=\'' + @{/change-month/{isNext}(isNext=${true})} + '\''"
+              >
+                <i class="fa-solid fa-chevron-right fs-6 text-primary"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-11 col-lg-4 col-sm-9">
+          <h4
+            class="text-center mt-4 fw-medium fs-6 text-secondary"
+            th:text="'Emre Takvimi: ' + ${scrollYear} + ' Yılı ' + ${scrollMonth} + ' ' + ${scrollLength} + ' Gün Çeker'"
+          ></h4>
+
+          <div class="row g-0 mt-4 text-center">
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Pt
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Sa
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Ça
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Pe
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Cu
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Ct
+            </div>
+            <div
+              class="col small fw-bold text-secondary opacity-75 tracking-widest"
+              style="font-size: 10px"
+            >
+              Pz
+            </div>
+          </div>
+
+          <div class="row row-cols-7 g-1">
+            <div
+              th:if="${scrollSkip >=1}"
+              th:each="skip : ${#numbers.sequence(scrollPrevLength - scrollSkip + 1, scrollPrevLength)}"
+              class="col-7 calendar-day d-flex flex-column align-items-center justify-content-center bg-body-tertiary border transition-colors cursor-pointer p-2"
+            >
+              <span
+                class="text-muted"
+                style="font-size: 0.6rem"
+                th:text="${skip}"
+              ></span>
+            </div>
+
+            <div
+              th:each="day : ${#numbers.sequence(1, scrollLength)}"
+              th:onclick="'window.location.href=\'' + @{/change-day/{day}(day=${day})} + '\''"
+              class="col calendar-day d-flex flex-column align-items-center justify-content-center bg-body-tertiary border transition-colors cursor-pointer p-2"
+            >
+              <span
+                style="
+                  width: 2rem;
+                  height: 2rem;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  text-align: center;
+                  font-size: 0.9rem;
+                "
+                th:classappend="${samePage && day == monthToday ? 'bg-success rounded-circle text-white' : day == scrollToday ? 'bg-primary rounded-circle text-white' : ''}"
+                class="fw-medium"
+                th:text="${day}"
+              ></span>
+            </div>
+          </div>
+
+          <h4
+            class="fw-medium fs-6 text-secondary mt-3 text-center"
+            th:text="'Seçili Gün: ' + ${scrollToday} + ' ' + ${scrollMonth} + ' ' + ${scrollYear} + ' ' + ${scrollWeekDayName}"
+          ></h4>
+        </div>
+
+        <div
+          class="d-flex justify-content-center align-items-center mt-2"
+          style="width: 100%"
+        >
+          <button
+            style="width: 10rem; border-width: 0; outline-width: 0"
+            class="bg-primary text-white px-3 py-2 rounded"
+          >
+            Seçili Güne Git
+          </button>
+        </div>
+      </div>
+    </div>
+    <aside
+      th:if="${showBar}"
+      class="position-fixed top-0 start-0 h-100 pt-5 d-flex flex-column align-items-center border-end overflow-auto no-scrollbar bg-light"
+      style="width: 4rem; z-index: 1000"
+    >
+      <div
+        th:each="monthName, stat : ${monthNames}"
+        th:text="${monthName}"
+        class="text-muted text-nowrap mb-3 cursor-pointer"
+        style="font-size: 0.9rem;"
+        th:onclick="'window.location.href=\'' + @{/change-month-spec/{month}(month=${stat.index + 1})} + '\''"
+      >
+        monthName
+      </div>
+
+     
+    </aside>
+    <aside
+      th:if="${showBar}"
+      class="position-fixed top-0 end-0 h-100 pt-5 d-flex flex-column align-items-center border-start overflow-auto no-scrollbar bg-light"
+      style="width: 4rem; z-index: 1000"
+    >
+      <div
+        th:each="pyear : ${#numbers.sequence(scrollYear - 12, scrollYear - 2)}"
+        th:text="${pyear}"
+        class="opacity-25 fw-medium fs-6 text-nowrap mb-3 cursor-pointer"
+        style="font-size: 0.8rem;"
+        th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${pyear})} + '\''"
+      >
+        year - 2
+      </div>
+
+      <div
+        class="opacity-75 fw-semibold text-nowrap mb-3 cursor-pointer"
+        style="font-size: 0.9rem;"
+        th:text="${scrollYear - 1}"
+        th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${scrollYear - 1})} + '\''"
+      >
+        year - 1
+      </div>
+
+      <div
+        id="activeYear"
+        class="opacity-75 fw-bold text-nowrap mb-2 mt-2 text-primary cursor-pointer"
+        style="font-size: 1rem;"
+        th:text="${scrollYear}"
+      >
+        year
+      </div>
+
+      <div
+        class="opacity-75 fw-semibold text-nowrap mt-3 cursor-pointer"
+        style="font-size: 0.9rem;"
+        th:text="${scrollYear + 1}"
+        th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${scrollYear + 1})} + '\''"
+      >
+        year + 1
+      </div>
+
+      <div
+        th:each="nyear : ${#numbers.sequence(scrollYear + 2, scrollYear + 12)}"
+        th:text="${nyear}"
+        class="opacity-50 fw-medium text-nowrap mt-3 cursor-pointer"
+        style="font-size: 0.8rem;"
+        th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${nyear})} + '\''"
+      >
+        scrollYear + 2
+      </div>
+    </aside>
+    <script id="1jv1sb">
+      document.addEventListener("DOMContentLoaded", function () {
+        const el = document.getElementById("activeYear");
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth", // istersen "smooth"
+            block: "center",
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

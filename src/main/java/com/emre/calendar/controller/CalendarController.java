@@ -43,7 +43,7 @@ public class CalendarController {
         Map<LocalDateTime, List<Event>> groupedEvents = allEvents.stream()
                 .sorted(Comparator.comparing(Event::getCreatedAt).reversed())
                 .collect(Collectors.groupingBy(
-                        todo -> todo.getCreatedAt(),
+                        event -> event.getCreatedAt(),
                         LinkedHashMap::new, // Sıralamayı korumak için
                         Collectors.toList()));
 
@@ -101,11 +101,16 @@ public class CalendarController {
     // Yeni bir görev eklemek için POST isteği
     @PostMapping("/add")
     public String addEvent(@RequestParam String title) {
-        Event newTodo = new Event();
-        newTodo.setTitle(title);
-        newTodo.setImportant(false);
-        newTodo.setCanceled(false);
-        repository.save(newTodo);
+        List<Calendar> calendars = calRepository.findAll();
+        if (calendars.size() > 0) {
+            Event newEvent = new Event();
+            newEvent.setTitle(title);
+            newEvent.setImportant(false);
+            newEvent.setCanceled(false);
+            newEvent.setCalendar(calendars.get(0));
+            repository.save(newEvent);
+        }
+
         return "redirect:/"; // İşlem bitince ana sayfaya dön
     }
 
@@ -135,7 +140,7 @@ public class CalendarController {
 
     // Olayı önemli yapmak için GET isteği
     @GetMapping("/important/{id}")
-    public String failTodo(@PathVariable Long id) {
+    public String toggleEventSignificance(@PathVariable Long id) {
         try {
             Optional<Event> event = repository.findById(id);
             if (event.isPresent()) {

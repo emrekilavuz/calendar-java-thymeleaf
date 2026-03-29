@@ -16,4 +16,8 @@ public class Event {
     private Boolean important;
     private Boolean canceled;
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "calendar_id", nullable = false)
+    private Calendar calendar;
 }

@@ -1,10 +1,10 @@
-package com.emre.todo;
+package com.emre.calendar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TodoApplicationTests {
+class CalendarApplicationTests {
 
 	@Test
 	void contextLoads() {

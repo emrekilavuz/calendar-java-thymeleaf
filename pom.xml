@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.emre</groupId>
-	<artifactId>todo</artifactId>
+	<artifactId>calendar</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>

@@ -1,18 +1,14 @@
 package com.emre.calendar.controller;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,18 +34,6 @@ public class CalendarController {
     public String index(Model model) {
         List<String> monthNames = new ArrayList<String>(Arrays.asList("Ocak", "Şubat", "Mart", "Nisan", "Mayıs",
                 "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"));
-        List<Event> allEvents = repository.findAll();
-
-        Map<LocalDateTime, List<Event>> groupedEvents = allEvents.stream()
-                .sorted(Comparator.comparing(Event::getCreatedAt).reversed())
-                .collect(Collectors.groupingBy(
-                        event -> event.getCreatedAt(),
-                        LinkedHashMap::new, // Sıralamayı korumak için
-                        Collectors.toList()));
-
-        System.out.print(groupedEvents);
-
-        model.addAttribute("groupedEvents", groupedEvents);
 
         List<Calendar> appCalendars = calRepository.findAll();
         Calendar appCalendar = null;
@@ -86,6 +70,7 @@ public class CalendarController {
             model.addAttribute("scrollToday", scrollToday);
             model.addAttribute("samePage", samePage);
             model.addAttribute("scrollMonth", scrollMonthName);
+            model.addAttribute("scrollMonthValue", scroll.getMonthValue());
             model.addAttribute("scrollWeekDayName", scrollWeekDayName);
             model.addAttribute("scrollLength", scrollMonthDayLength);
             model.addAttribute("scrollYear", scrollYear);
@@ -96,6 +81,22 @@ public class CalendarController {
         }
 
         return "index"; // src/main/resources/templates/index.html dosyasını arar
+    }
+
+    @GetMapping("/day/{eyear}/{emonth}/{eday}")
+    public String dayEvents(Model model, @PathVariable Integer eyear, @PathVariable Integer emonth,
+            @PathVariable Integer eday) {
+
+        LocalDate date = LocalDate.of(eyear, emonth, eday);
+
+        LocalDateTime start = date.atStartOfDay(); // 2026-03-30 00:00:00
+        LocalDateTime end = date.atTime(23, 59, 59); // 2026-03-30 23:59:59
+
+        List<Event> events = repository.findByCreatedAtBetween(start, end);
+
+        model.addAttribute("events", events);
+
+        return "day-events";
     }
 
     // Yeni bir görev eklemek için POST isteği

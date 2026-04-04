@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,18 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.emre.calendar.entity.Calendar;
-import com.emre.calendar.entity.Event;
 import com.emre.calendar.repository.CalendarRepository;
-import com.emre.calendar.repository.EventRepository;
 
 @Controller
 public class CalendarController {
-    @Autowired
-    private EventRepository repository;
     @Autowired
     private CalendarRepository calRepository;
 
@@ -78,85 +71,17 @@ public class CalendarController {
             model.addAttribute("scrollPrevLength", scrollPrevLength);
             model.addAttribute("showBar", showBar);
             model.addAttribute("monthNames", monthNames);
+
+            return "index";
+        }
+        else {
+            return null;
         }
 
-        return "index"; // src/main/resources/templates/index.html dosyasını arar
+         // src/main/resources/templates/index.html dosyasını arar
     }
 
-    @GetMapping("/day/{eyear}/{emonth}/{eday}")
-    public String dayEvents(Model model, @PathVariable Integer eyear, @PathVariable Integer emonth,
-            @PathVariable Integer eday) {
-
-        LocalDate date = LocalDate.of(eyear, emonth, eday);
-
-        LocalDateTime start = date.atStartOfDay(); // 2026-03-30 00:00:00
-        LocalDateTime end = date.atTime(23, 59, 59); // 2026-03-30 23:59:59
-
-        List<Event> events = repository.findByCreatedAtBetween(start, end);
-
-        model.addAttribute("events", events);
-
-        return "day-events";
-    }
-
-    // Yeni bir görev eklemek için POST isteği
-    @PostMapping("/add")
-    public String addEvent(@RequestParam String title) {
-        List<Calendar> calendars = calRepository.findAll();
-        if (calendars.size() > 0) {
-            Event newEvent = new Event();
-            newEvent.setTitle(title);
-            newEvent.setImportant(false);
-            newEvent.setCanceled(false);
-            newEvent.setCalendar(calendars.get(0));
-            repository.save(newEvent);
-        }
-
-        return "redirect:/"; // İşlem bitince ana sayfaya dön
-    }
-
-    // Görevi silmek için GET isteği
-    @GetMapping("/delete/{id}")
-    public String deleteEvent(@PathVariable Long id) {
-        repository.deleteById(id);
-        return "redirect:/";
-    }
-
-    // Olayı iptal için GET isteği
-    @GetMapping("/cancel/{id}")
-    public String cancelEvent(@PathVariable Long id) {
-        try {
-            Optional<Event> event = repository.findById(id);
-            if (event.isPresent()) {
-                Event eventVal = event.get();
-                eventVal.setCanceled(!eventVal.getCanceled());
-                repository.save(eventVal);
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        return "redirect:/";
-    }
-
-    // Olayı önemli yapmak için GET isteği
-    @GetMapping("/important/{id}")
-    public String toggleEventSignificance(@PathVariable Long id) {
-        try {
-            Optional<Event> event = repository.findById(id);
-            if (event.isPresent()) {
-                Event eventVal = event.get();
-                eventVal.setImportant(!eventVal.getImportant());
-                repository.save(eventVal);
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
-        return "redirect:/";
-    }
-
-    @GetMapping("/change-year/{year}")
+    @GetMapping("/calendar/change-year/{year}")
     public String changeYear(@PathVariable Integer year) {
         Optional<Calendar> calendar = calRepository.findById(Long.valueOf(1));
         if (calendar.isPresent()) {
@@ -170,7 +95,7 @@ public class CalendarController {
         return "redirect:/";
     }
 
-    @GetMapping("/change-day/{day}")
+    @GetMapping("/calendar/change-day/{day}")
     public String changeDay(@PathVariable Integer day) {
         Optional<Calendar> calendar = calRepository.findById(Long.valueOf(1));
         if (calendar.isPresent()) {
@@ -184,7 +109,7 @@ public class CalendarController {
         return "redirect:/";
     }
 
-    @GetMapping("/change-month/{isNext}")
+    @GetMapping("/calendar/change-month/{isNext}")
     public String changeMonth(@PathVariable Boolean isNext) {
         Optional<Calendar> calendar = calRepository.findById(Long.valueOf(1));
         if (calendar.isPresent()) {
@@ -205,7 +130,7 @@ public class CalendarController {
         return "redirect:/";
     }
 
-    @GetMapping("/change-month-spec/{month}")
+    @GetMapping("/calendar/change-month-spec/{month}")
     public String changeMonthSpec(@PathVariable Integer month) {
         Optional<Calendar> calendar = calRepository.findById(Long.valueOf(1));
         if (calendar.isPresent()) {
@@ -220,7 +145,7 @@ public class CalendarController {
         return "redirect:/";
     }
 
-    @GetMapping("/toggle-bar")
+    @GetMapping("/calendar/toggle-bar")
     public String changeBar() {
         Optional<Calendar> calendar = calRepository.findById(Long.valueOf(1));
         if (calendar.isPresent()) {

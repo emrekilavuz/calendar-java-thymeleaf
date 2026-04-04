@@ -121,7 +121,7 @@
           th:text="${monthName}"
           class="text-muted text-nowrap mb-3 cursor-pointer"
           style="font-size: 0.9rem"
-          th:onclick="'window.location.href=\'' + @{/change-month-spec/{month}(month=${stat.index + 1})} + '\''"
+          th:onclick="'window.location.href=\'' + @{/calendar/change-month-spec/{month}(month=${stat.index + 1})} + '\''"
         >
           monthName
         </div>
@@ -138,7 +138,7 @@
             >
               <div class="d-flex align-items-center gap-3">
                 <button
-                  th:onclick="'window.location.href=\'' + @{/toggle-bar} + '\''"
+                  th:onclick="'window.location.href=\'' + @{/calendar/toggle-bar} + '\''"
                   class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
                 >
                   <i class="fa-solid fa-bars fs-5 text-primary"></i>
@@ -152,13 +152,13 @@
               <div class="d-flex align-items-center gap-2">
                 <button
                   class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
-                  th:onclick="'window.location.href=\'' + @{/change-month/{isNext}(isNext=${false})} + '\''"
+                  th:onclick="'window.location.href=\'' + @{/calendar/change-month/{isNext}(isNext=${false})} + '\''"
                 >
                   <i class="fa-solid fa-chevron-left fs-6 text-primary"></i>
                 </button>
                 <button
                   class="btn btn-outline-secondary border-0 rounded-circle p-2 d-flex align-items-center justify-content-center transition-scale"
-                  th:onclick="'window.location.href=\'' + @{/change-month/{isNext}(isNext=${true})} + '\''"
+                  th:onclick="'window.location.href=\'' + @{/calendar/change-month/{isNext}(isNext=${true})} + '\''"
                 >
                   <i class="fa-solid fa-chevron-right fs-6 text-primary"></i>
                 </button>
@@ -235,7 +235,7 @@
 
               <div
                 th:each="day : ${#numbers.sequence(1, scrollLength)}"
-                th:onclick="'window.location.href=\'' + @{/change-day/{day}(day=${day})} + '\''"
+                th:onclick="'window.location.href=\'' + @{/calendar/change-day/{day}(day=${day})} + '\''"
                 class="col calendar-day d-flex flex-column align-items-center justify-content-center bg-body-tertiary border transition-colors cursor-pointer p-2"
               >
                 <span
@@ -267,7 +267,7 @@
             <button
               style="width: 10rem; border-width: 0; outline-width: 0"
               class="bg-primary text-white px-3 py-2 rounded"
-              th:onclick="'window.location.href=\'' + @{/day/{eyear}/{emonth}/{eday}(eyear=${scrollYear},emonth=${scrollMonthValue},eday=${scrollToday})} + '\''"
+              th:onclick="'window.location.href=\'' + @{/event/day/{eyear}/{emonth}/{eday}(eyear=${scrollYear},emonth=${scrollMonthValue},eday=${scrollToday})} + '\''"
             >
               Seçili Güne Git
             </button>
@@ -287,7 +287,7 @@
           th:text="${pyear}"
           class="opacity-25 fw-medium fs-6 text-nowrap mb-3 cursor-pointer"
           style="font-size: 0.8rem"
-          th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${pyear})} + '\''"
+          th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${pyear})} + '\''"
         >
           year - 2
         </div>
@@ -296,7 +296,7 @@
           class="opacity-75 fw-semibold text-nowrap mb-3 cursor-pointer"
           style="font-size: 0.9rem"
           th:text="${scrollYear - 1}"
-          th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${scrollYear - 1})} + '\''"
+          th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${scrollYear - 1})} + '\''"
         >
           year - 1
         </div>
@@ -314,7 +314,7 @@
           class="opacity-75 fw-semibold text-nowrap mt-3 cursor-pointer"
           style="font-size: 0.9rem"
           th:text="${scrollYear + 1}"
-          th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${scrollYear + 1})} + '\''"
+          th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${scrollYear + 1})} + '\''"
         >
           year + 1
         </div>
@@ -324,7 +324,7 @@
           th:text="${nyear}"
           class="opacity-50 fw-medium text-nowrap mt-3 cursor-pointer"
           style="font-size: 0.8rem"
-          th:onclick="'window.location.href=\'' + @{/change-year/{year}(year=${nyear})} + '\''"
+          th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${nyear})} + '\''"
         >
           scrollYear + 2
         </div>

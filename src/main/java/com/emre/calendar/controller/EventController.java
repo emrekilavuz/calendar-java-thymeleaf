@@ -62,7 +62,12 @@ public class EventController {
             newEvent.setDescription(event.getDescription());
             newEvent.setImportant(event.getImportant());
             newEvent.setTitle(event.getTitle());
-            newEvent.setUrl(event.getUrl());
+            if(!event.getUrl().isBlank()) {
+                newEvent.setUrl(event.getUrl());
+            }
+            else {
+                newEvent.setUrl(null);
+            }
             LocalDateTime mDateTime = event.getCreatedAt().withHour(event.getHour()).withMinute(event.getMinute());
             newEvent.setCreatedAt(mDateTime);
             repository.save(newEvent);

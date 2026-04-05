@@ -18,7 +18,16 @@
         color: #6ea8fe !important; /* Bootstrap dark blue */
       }
     </style>
-    <body>
+    <body class="bg-light" style="width: 100vw">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <!-- Anasayfa Linki -->
+          <a class="navbar-brand d-flex align-items-center text-success" th:href="@{/}">
+            <i class="fa-solid fa-house me-2"></i>
+            Anasayfa
+          </a>
+        </div>
+      </nav>
       <div class="container mt-4">
         <div class="row g-3">
           <!-- Event Loop -->
@@ -120,8 +129,8 @@
           </div>
           <div class="card-body">
             <form th:action="@{/event/add}" th:object="${event}" method="post">
-             <input type="hidden" th:field="*{createdAt}" />
-             <input type="hidden" th:field="*{calendarId}" />
+              <input type="hidden" th:field="*{createdAt}" />
+              <input type="hidden" th:field="*{calendarId}" />
               <!-- Title -->
               <div class="mb-3">
                 <label class="form-label">

@@ -74,30 +74,43 @@
       }
 
       .bodyAdjust {
-        width: 100%;
+        width: 100vw;
+      }
+
+      .monthSize {
+        font-size: 0.7rem;
       }
 
       @media (min-width: 700px) {
         .bodyAdjust {
-          width: 80%;
-          margin-left: 8%;
-          margin-right: 8%;
+          width: 86vw;
+          margin-left: 7vw;
+          margin-right: 7vw;
+        }
+
+        .monthSize {
+          font-size: 0.8rem;
         }
       }
 
       @media (min-width: 900px) {
         .bodyAdjust {
-          width: 70%;
-          margin-left: 14%;
-          margin-right: 14%;
+          width: 80vw;
+          margin-left: 10%;
+          margin-right: 10%;
         }
+
+        .monthSize {
+          font-size: 0.85rem;
+        }
+
       }
 
       @media (min-width: 1100px) {
         .bodyAdjust {
-          width: 60%;
-          margin-left: 18%;
-          margin-right: 18%;
+          width: 70vw;
+          margin-left: 15vw;
+          margin-right: 15vw;
         }
       }
       /* Koyu mod (Dark Mode) desteği için Bootstrap 5.3 data-bs-theme kullanır */
@@ -110,27 +123,25 @@
     <div class="d-flex justify-content-center">
       <aside
         th:if="${showBar}"
-        class="pt-5 px-4 px-lg-5 d-flex flex-column align-items-center overflow-auto no-scrollbar bg-light border-end"
+        class="pt-5 px-3 px-lg-5 d-flex flex-column align-items-center overflow-auto no-scrollbar bg-light"
         style="
           max-height: 100vh;
-          border-color: rgba(200, 200, 200, 0.9);
         "
       >
         <div
           th:each="monthName, stat : ${monthNames}"
           th:text="${monthName}"
-          class="text-muted text-nowrap mb-3 cursor-pointer"
-          style="font-size: 0.9rem"
+          class="text-nowrap mb-3 cursor-pointer monthSize opacity-50"
           th:onclick="'window.location.href=\'' + @{/calendar/change-month-spec/{month}(month=${stat.index + 1})} + '\''"
         >
           monthName
         </div>
       </aside>
-      <div class="px-3">
+      <div class="px-3 border-start border-end">
         <div class="row justify-content-center">
           <header
             style="max-width: 23rem"
-            class="navbar d-flex bg-light border-bottom px-4 py-2 shadow-sm col-md-11 col-12 col-lg-10"
+            class="d-flex py-2 col-12"
           >
             <div
               class="d-flex align-items-center justify-content-between ps-2 pe-6"
@@ -276,7 +287,7 @@
       </div>
       <aside
         th:if="${showBar}"
-        class="pt-5 px-4 px-lg-5 d-flex flex-column align-items-center border-start overflow-auto no-scrollbar bg-light"
+        class="pt-5 px-3 px-lg-5 d-flex flex-column align-items-center overflow-auto no-scrollbar bg-light"
         style="
           max-height: 100vh;
           border-color: rgba(200, 200, 200, 0.9);
@@ -285,8 +296,7 @@
         <div
           th:each="pyear : ${#numbers.sequence(scrollYear - 12, scrollYear - 2)}"
           th:text="${pyear}"
-          class="opacity-25 fw-medium fs-6 text-nowrap mb-3 cursor-pointer"
-          style="font-size: 0.8rem"
+          class="opacity-50 fw-medium text-nowrap mb-3 cursor-pointer monthSize"
           th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${pyear})} + '\''"
         >
           year - 2
@@ -294,7 +304,7 @@
 
         <div
           class="opacity-75 fw-semibold text-nowrap mb-3 cursor-pointer"
-          style="font-size: 0.9rem"
+          style="font-size: 0.8rem"
           th:text="${scrollYear - 1}"
           th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${scrollYear - 1})} + '\''"
         >
@@ -304,7 +314,7 @@
         <div
           id="activeYear"
           class="opacity-75 fw-bold text-nowrap mb-2 mt-2 text-primary cursor-pointer"
-          style="font-size: 1rem"
+          style="font-size: 0.9rem"
           th:text="${scrollYear}"
         >
           year
@@ -312,7 +322,7 @@
 
         <div
           class="opacity-75 fw-semibold text-nowrap mt-3 cursor-pointer"
-          style="font-size: 0.9rem"
+          style="font-size: 0.8rem"
           th:text="${scrollYear + 1}"
           th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${scrollYear + 1})} + '\''"
         >
@@ -322,8 +332,7 @@
         <div
           th:each="nyear : ${#numbers.sequence(scrollYear + 2, scrollYear + 12)}"
           th:text="${nyear}"
-          class="opacity-50 fw-medium text-nowrap mt-3 cursor-pointer"
-          style="font-size: 0.8rem"
+          class="opacity-50 text-nowrap mt-3 cursor-pointer monthSize"
           th:onclick="'window.location.href=\'' + @{/calendar/change-year/{year}(year=${nyear})} + '\''"
         >
           scrollYear + 2
